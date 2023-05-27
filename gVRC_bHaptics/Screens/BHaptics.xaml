@@ -1,0 +1,98 @@
+﻿<UserControl x:Class="gVRC_bHaptics.Screens.BHaptics"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:gVRC_bHaptics.Screens" 
+             xmlns:controls="clr-namespace:MicaWPF.Controls;assembly=MicaWPF"
+             mc:Ignorable="d" 
+             d:DesignHeight="310" d:DesignWidth="310" Loaded="UserControl_Loaded">
+
+    <Grid HorizontalAlignment="Stretch" VerticalAlignment="Stretch" >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+            <ColumnDefinition Width="100"></ColumnDefinition>
+
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+            <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+        </Grid.RowDefinitions>
+
+        <GroupBox Header="VRChat OSC" Grid.ColumnSpan="3" Grid.RowSpan="5">
+            <GroupItem>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="90"></ColumnDefinition>
+                        <ColumnDefinition Width="70"></ColumnDefinition>
+                        <ColumnDefinition Width="1*"></ColumnDefinition>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+                        <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+                        <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+                    </Grid.RowDefinitions>
+
+                    <Label x:Name="LabelOsc" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1">State:</Label>
+                    <Label x:Name="LabelOscConnection" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Content="unknown" />
+                    <Button x:Name="ButtonTestOSC" Grid.Row="0" Grid.Column="1" Width="60" Height="20" Background="#555555" Margin="1,-31,3,35" Content="Test" Click="ButtonTestOSC_Click" ></Button>
+
+                    <Label x:Name="LabelPortIn" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1">VRC Port In:</Label>
+                    <TextBox x:Name="TextPortIn" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="1" Width="50" Text="" TextChanged="TextPortIn_TextChanged"/>
+
+                    <Label x:Name="LabelPortOut" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="1">VRC Port Out:</Label>
+                    <TextBox x:Name="TextPortOut" Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="1" Width="50" TextChanged="TextPortOut_TextChanged" />
+                </Grid>
+            </GroupItem>
+        </GroupBox>
+
+        <GroupBox Header="bHaptics" Grid.Row="5" Grid.ColumnSpan="3" Grid.RowSpan="10" >
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50"></ColumnDefinition>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="30"></ColumnDefinition>
+                    <ColumnDefinition Width="100"></ColumnDefinition>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+                    <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+                    <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+                    <RowDefinition MinHeight="25" MaxHeight="25"></RowDefinition>
+                </Grid.RowDefinitions>
+
+                <Label x:Name="LabelBHaptcis" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="1">State:</Label>
+                <Label x:Name="LabelBHapticsConnection" Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="1" Content="unknown" />
+
+                <Label x:Name="LabelVestMult" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="1">Vest:</Label>
+                <Slider x:Name="SliderVest" Grid.Row="1" Grid.Column="1" Maximum="100" Minimum="0" Value="100" Interval="1" ValueChanged="SliderVest_ValueChanged" />
+                <Label x:Name="LabelVestValue" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="1">100</Label>
+                <CheckBox x:Name="CheckVestToggle" Grid.Row="1" Grid.Column="3" HorizontalAlignment="Center" IsChecked="true" Checked="CheckVestToggle_CheckedChanged" Unchecked="CheckVestToggle_CheckedChanged"/>
+                <Button x:Name="ButtonVestTest" Margin="0,2,0,2" Width="50" Grid.Row="1" Grid.Column="4" Content="TEST" Click="ButtonVestTest_Click"/>
+
+                <Label x:Name="LabelHeadMult" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="1">Head:</Label>
+                <Slider x:Name="SliderHead" Grid.Row="2" Grid.Column="1" Maximum="100" Minimum="0" Value="100" Interval="1" ValueChanged="SliderHead_ValueChanged"  />
+                <Label x:Name="LabelHeadValue" Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="1">100</Label>
+                <CheckBox x:Name="CheckHeadToggle" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Center" IsChecked="true" Unchecked="CheckHeadToggle_CheckedChanged" Checked="CheckHeadToggle_CheckedChanged"/>
+                <Button x:Name="ButtonHeadTest" Margin="0,2,0,2" Width="50" Grid.Row="2" Grid.Column="4" Content="TEST" Click="ButtonHeadTest_Click" />
+
+                <CheckBox x:Name="CheckHapticsAFK" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="2" Content="Disable haptics on AFK" Checked="CheckHapticsAFK_CheckedChanged" Unchecked="CheckHapticsAFK_CheckedChanged"/>
+
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

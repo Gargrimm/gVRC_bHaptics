@@ -1,0 +1,25 @@
+{
+  "VRCPortIn": 9000,
+  "VRCPortOut": 9001,
+  "ProxyPortOut": 9002,
+  "ProxtyEndPoints": [
+    {
+      "Enabled": false,
+      "Description": "Test",
+      "IP": "127.0.0.1",
+      "PortIn": 9003,
+      "PatternsRegEx": [
+        "\\/avatar\\/parameters\\/bOSC_v1Vest((Front)|(Back))_\\d{1,2}"
+      ],
+      "PatternsContains": [
+        "/avatar/parameters/bOSC_v1_Vest"
+      ]
+    }
+  ],
+  "bHaptics": {
+    "VestMult": 100,
+    "HeadMult": 100,
+    "DisableOnAFK":  true
+  },
+  "OscLog": false
+}

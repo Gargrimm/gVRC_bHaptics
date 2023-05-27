@@ -1,0 +1,26 @@
+﻿<controls:MicaWindow x:Class="gVRC_bHaptics.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:gVRC_bHaptics"
+        xmlns:sc="clr-namespace:gVRC_bHaptics.Screens"
+        xmlns:vm="clr-namespace:gVRC_bHaptics.ViewModels"
+        xmlns:controls="clr-namespace:MicaWPF.Controls;assembly=MicaWPF"
+        mc:Ignorable="d"
+        Title="{Binding Title}" Height="450" Width="390" Background="Black">
+    
+    <Window.DataContext>
+        <vm:AppViewModel/>
+    </Window.DataContext>
+    
+    <StackPanel>
+        <TabControl>
+            <TabItem Header="OSC">
+                <Viewbox StretchDirection="Both" Stretch="Uniform">
+                    <sc:BHaptics x:Name="BHaptics" Width="305"/>
+                </Viewbox>
+            </TabItem>
+        </TabControl>
+    </StackPanel>
+</controls:MicaWindow>
