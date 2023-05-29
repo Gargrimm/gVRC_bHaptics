@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace gVRC_bHaptics.Classes.Configuration
 {
-    internal class BHapticsConfig
+    public class BHapticsConfig
     {
         public bool VestEnabled { get; set; } = true;
         public bool HeadEnabled { get; set; } = true;

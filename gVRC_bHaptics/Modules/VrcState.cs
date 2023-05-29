@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,10 +24,14 @@ namespace gVRC_bHaptics.Modules
                     if (bool.TryParse(value?.ToString(), out bool boolVal))
                     {
                         AFK = boolVal;
+                        App.Log.Debug($"AFK => {boolVal}");
                     }
                 }
             }
-            catch { }
+            catch (Exception ex)
+            {
+                App.Log.Error("VrcState.OscManager_MessageReceived", ex);
+            }
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using System.Globalization;
 using gVRC_bHaptics.Classes.Configuration;
 using System.Windows;
+using log4net;
 
 namespace gVRC_bHaptics.Modules
 {
@@ -23,8 +24,6 @@ namespace gVRC_bHaptics.Modules
             }
         }
 
-        private CancellationTokenSource ThreadsCancel = null;
-
         public Task TaskOSC = null;
         public Task TaskBHaptics = null;
 
@@ -37,37 +36,60 @@ namespace gVRC_bHaptics.Modules
         public delegate void ConfigurationLoadedEventHandler(object sender, Configuration config);
         public event ConfigurationLoadedEventHandler ConfigurationLoaded;
 
-        public CultureInfo CultureUS = new CultureInfo("en-US");
-        public CultureInfo CultureES = new CultureInfo("es-ES");
-        public Logger GeneralLog = new Logger();
-        public Logger OSCLog = new Logger();
-
         public OSC OscManager { get; private set; }
         public BHaptics BHapticsMaanger { get; private set; }
         public Configuration Configuration { get; private set; }
+        public VrcState VrcState { get; private set; }
 
+        private CancellationTokenSource ThreadsCancel = null;
         private readonly string ConfigFilePath = ".";
         private readonly string ConfigFileName = "config.json";
 
+        private Common()
+        {
+        }
+
         public void OnAvatarParameterEvent(string address, string value)
         {
-
-            AvatarParameterEvent?.Invoke(address, value);
+            try
+            {
+                AvatarParameterEvent?.Invoke(address, value);
+            }
+            catch (Exception ex)
+            {
+                App.Log.Error("Shutdown", ex);
+            }
         }
 
         public void Init()
         {
-            ReadConfig();
+            try
+            {
+                ReadConfig();
 
-            Exit = false;
-            ThreadsCancel = new CancellationTokenSource();
+                Exit = false;
+                ThreadsCancel = new CancellationTokenSource();
+            }
+            catch (Exception ex)
+            {
+                App.Log.Error("Shutdown", ex);
+            }
         }
 
         public void Shutdown()
         {
-            Exit = true;
-            StopThreads();
-            SaveConfig();
+            try
+            {
+                Exit = true;
+                VrcState = null;
+
+                StopThreads();
+                SaveConfig();
+            }
+            catch (Exception ex)
+            {
+                App.Log.Error("Shutdown", ex);
+            }
         }
 
         public void ReadConfig()
@@ -87,8 +109,9 @@ namespace gVRC_bHaptics.Modules
                     SaveConfig();
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                App.Log.Error("ReadConfig", ex);
             }
         }
 
@@ -100,23 +123,41 @@ namespace gVRC_bHaptics.Modules
                 string contents = Newtonsoft.Json.JsonConvert.SerializeObject(Configuration, Newtonsoft.Json.Formatting.Indented);
                 File.WriteAllText(pathToFile, contents);
             }
-            catch(Exception) { }
+            catch (Exception ex)
+            {
+                App.Log.Error("SaveConfig", ex);
+            }
         }
 
         public void StartThreads()
         {
-            OscManager = new OSC(this);
-            BHapticsMaanger = new BHaptics(this);
+            try
+            {
+                OscManager = new OSC();
+                BHapticsMaanger = new BHaptics();
+                VrcState = new VrcState();
 
-            Exit = false;
-            TaskOSC = Task.Factory.StartNew(() => OscManager.RunThread(), ThreadsCancel.Token);
-            TaskBHaptics = Task.Factory.StartNew(() => BHapticsMaanger.RunThread(), ThreadsCancel.Token);
+                Exit = false;
+                TaskOSC = Task.Factory.StartNew(() => OscManager.RunThread(), ThreadsCancel.Token);
+                TaskBHaptics = Task.Factory.StartNew(() => BHapticsMaanger.RunThread(), ThreadsCancel.Token);
+            }
+            catch (Exception ex)
+            {
+                App.Log.Error("StartThreads", ex);
+            }
         }
 
         public void StopThreads()
         {
-            Exit = true;
-            ThreadsCancel.Cancel();
+            try
+            {
+                Exit = true;
+                ThreadsCancel.Cancel();
+            }
+            catch (Exception ex)
+            {
+                App.Log.Error("StopThreads", ex);
+            }
         }
 
         public static void InvokeIfNecessary(Action action)
@@ -130,8 +171,9 @@ namespace gVRC_bHaptics.Modules
                     Application.Current?.Dispatcher?.Invoke(action);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                App.Log.Error("InvokeIfNecessary", ex);
             }
         }
     }

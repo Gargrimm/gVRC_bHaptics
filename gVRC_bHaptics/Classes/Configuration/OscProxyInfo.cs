@@ -2,7 +2,7 @@
 
 namespace gVRC_bHaptics.Classes.Configuration
 {
-    internal class OscProxyInfo
+    public class OscProxyInfo
     {
         public bool Enabled { get; set; } = false;
         public string Description { get; set; } = string.Empty;

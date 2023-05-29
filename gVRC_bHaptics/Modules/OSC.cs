@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using gVRC_bHaptics.Classes.Configuration;
 using System.Windows.Interop;
+using log4net;
 
 namespace gVRC_bHaptics.Modules
 {
@@ -23,21 +24,20 @@ namespace gVRC_bHaptics.Modules
         public bool Enabled { get; set; } = true;
         public bool Connected { get; private set; }
 
-        OscListener OSCListener = null;
-        OscSender OSCSender = null;
+        private OscListener OSCListener = null;
+        private OscSender OSCSender = null;
 
-        readonly Common Common;
-        readonly string IP = "127.0.0.1";
-        readonly int Delay = 100;
+        private readonly ILog Log = LogManager.GetLogger(typeof(OSC));
+        private readonly string IP = "127.0.0.1";
+        private readonly int Delay = 100;
 
-        bool Reload;
-        IPAddress Address;
+        private bool Reload;
+        private IPAddress Address;
 
-        Configuration ProxyConfig { get { return Common?.Configuration; } }
+        Configuration ProxyConfig { get { return Common.Instance?.Configuration; } }
 
-        public OSC(Common common)
+        public OSC()
         {
-            Common = common;
         }
 
         public void RunThread()
@@ -45,18 +45,18 @@ namespace gVRC_bHaptics.Modules
             try
             {
                 Address = IPAddress.Parse(IP);
-                Common.ConfigurationLoaded += (sender, args) => { Reload = true; };
+                Common.Instance.ConfigurationLoaded += (sender, args) => { Reload = true; };
 
-                while (!Common.Exit)
+                while (!Common.Instance.Exit)
                 {
                     try
                     {
                         if (!Enabled) continue;
 
-                        Common.GeneralLog.Log("(OSC.RunThread) Connecting...");
+                        Log.Debug("Connecting...");
 
-                        using (OSCSender = new Rug.Osc.OscSender(Address, 0, ProxyConfig.VRCPortIn))
-                        using (OSCListener = new Rug.Osc.OscListener(Address, ProxyConfig.VRCPortOut))
+                        using (OSCSender = new OscSender(Address, 0, ProxyConfig.VRCPortIn))
+                        using (OSCListener = new OscListener(Address, ProxyConfig.VRCPortOut))
                         {
                             OSCSender.Connect();
                             OSCListener.Connect();
@@ -64,11 +64,11 @@ namespace gVRC_bHaptics.Modules
                             OSCListener.Attach("/world/*", OnWorldParamEvent);
                             OSCListener.Attach("/avatar/parameters/*", OnAvatarParamEvent);
 
-                            Common.GeneralLog.Log("(OSC.RunThread) Initialized");
+                            Log.Debug("Initialized");
                             Connected = true;
                             ConnectionStateChanged?.Invoke(true);
 
-                            while (!Common.Exit && !Reload && Enabled)
+                            while (!Common.Instance.Exit && !Reload && Enabled)
                             {
                                 ProcessCommand();
                                 Thread.Sleep(Delay);
@@ -78,34 +78,30 @@ namespace gVRC_bHaptics.Modules
 
                             if (Reload)
                             {
-                                Common.GeneralLog.Log("(OSC.RunThread) Reloading");
+                                Log.Debug("Reloading");
                                 Reload = false;
                             }
 
                             if (!Enabled)
-                            {
-                                Common.GeneralLog.Log("(OSC.RunThread) Disabled");
-                            }
+                                Log.Debug("Disabled");
                         }
                     }
                     catch (Exception ex)
                     {
-                        Common.GeneralLog.Log("(OSC.RunThread) Error");
-                        Common.GeneralLog.Log(ex);
-                        Common.GeneralLog.Log("(OSC.RunThread) Retrying in 5 second...");
+                        Log.Error("RunThread loop", ex);
+                        Log.Debug("Retrying in 5 second...");
                         Thread.Sleep(5000);
                     }
                 }
             }
             catch (ThreadAbortException)
             {
-                Common.GeneralLog.Log("(OSC.RunThread) Cancelled");
+                Log.Warn("RunThread cancelled");
             }
             catch (Exception ex)
             {
-                Common.GeneralLog.Log("(OSC.RunThread) Error");
-                Common.GeneralLog.Log(ex);
-                Common.Exit = true;
+                Log.Error("RunThread", ex);
+                Common.Instance.Exit = true;
             }
             finally
             {
@@ -115,12 +111,22 @@ namespace gVRC_bHaptics.Modules
 
         private void Disconnect()
         {
-            OSCSender?.Dispose();
-            OSCListener?.Dispose();
-            OSCSender = null;
-            OSCListener = null;
-            Connected = false;
-            ConnectionStateChanged?.Invoke(false);
+            try
+            {
+                OSCSender?.Dispose();
+                OSCListener?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Disconnect", ex);
+            }
+            finally
+            {
+                OSCSender = null;
+                OSCListener = null;
+                Connected = false;
+                ConnectionStateChanged?.Invoke(false);
+            }
         }
 
         public void Reconnect()
@@ -140,7 +146,7 @@ namespace gVRC_bHaptics.Modules
                     {
                         var rgx = new Regex(pattern, RegexOptions.IgnoreCase);
                         match = rgx.IsMatch(message.Address);
-                        if (match) { return true; } //found
+                        if (match) return true; //found
                     }
                 }
 
@@ -151,15 +157,16 @@ namespace gVRC_bHaptics.Modules
                     foreach (var pattern in endpoint.PatternsContains)
                     {
                         match = message.Address.Contains(pattern);
-                        if (match) { return true; } //found
+                        if (match) return true; //found
                     }
                 }
 
                 return false; //none found
             }
-            catch
+            catch (Exception ex)
             {
-                return true; //default to found
+                Log.Error("IsMessageForEndpoint", ex);
+                return true; //defaults to found
             }
         }
 
@@ -174,40 +181,47 @@ namespace gVRC_bHaptics.Modules
                     if (!IsMessageForEndpoint(endpoint, message)) continue;
 
                     var address = IPAddress.Parse(endpoint.IP);
-                    using (var proxySender = new Rug.Osc.OscSender(address, ProxyConfig.ProxyPortOut, endpoint.Port))
+                    using (var proxySender = new OscSender(address, ProxyConfig.ProxyPortOut, endpoint.Port))
                     {
                         try
                         {
                             proxySender.Connect();
                             proxySender.Send(message);
                         }
-                        catch { }
+                        catch (Exception ex)
+                        {
+                            Log.Error("RelayMsgToProxyEntries on connect and send", ex);
+                        }
                     }
                 }
             }
-            catch { }
-        }                
+            catch (Exception ex)
+            {
+                Log.Error("RelayMsgToProxyEntries", ex);
+            }
+        }
 
         private void ProcessCommand()
         {
             try
             {
-                if (Common.CommnadQueue.TryDequeue(out var cmd))
+                if (Common.Instance.CommnadQueue.TryDequeue(out var cmd))
                 {
                     OscMessage msg = null;
 
-                    if (cmd.Type == OscCommandType.Any)
+                    switch (cmd.Type)
                     {
-                        msg = new OscMessage($"{cmd.Path}", cmd.Value);
-                    }
-                    else if (cmd.Type == OscCommandType.Parameter)
-                    {
-                        msg = new OscMessage($"/avatar/parameters/{cmd.Path}", cmd.Value);
-
-                    }
-                    else if (cmd.Type == OscCommandType.ChatSend)
-                    {
-                        msg = new OscMessage("/chatbox/input", cmd.Value);
+                        case OscCommandType.Any:
+                            msg = new OscMessage($"{cmd.Path}", cmd.Value);
+                            break;
+                        case OscCommandType.Parameter:
+                            msg = new OscMessage($"/avatar/parameters/{cmd.Path}", cmd.Value);
+                            break;
+                        case OscCommandType.ChatSend:
+                            msg = new OscMessage("/chatbox/input", cmd.Value);
+                            break;
+                        default:
+                            return;
                     }
 
                     OSCSender.Send(msg);
@@ -215,8 +229,7 @@ namespace gVRC_bHaptics.Modules
             }
             catch (Exception ex)
             {
-                Common.GeneralLog.Log("(OSC.ProcessCommand) Error");
-                Common.GeneralLog.Log(ex);
+                Log.Error("ProcessCommand Error", ex);
             }
         }
 
@@ -232,15 +245,9 @@ namespace gVRC_bHaptics.Modules
                 if (message.Address.StartsWith("/avatar/parameters/Cheek_")) return;
                 if (message.Address.StartsWith("/avatar/parameters/Angular")) return;
 
-                if ((Common.Instance?.Configuration?.OscLog).GetValueOrDefault())
-                {
-                    File.AppendAllText("osc.log", $"=> {message.Address}, {message.FirstOrDefault()}{Environment.NewLine}");
-                }
-
-                //Common.OSCLog.Log($"=> {message.Address} {message.FirstOrDefault()}");
                 var addr = message.Address;
                 var val = message.FirstOrDefault()?.ToString();
-                Common.OnAvatarParameterEvent(addr, val);
+                Common.Instance.OnAvatarParameterEvent(addr, val);
                 Console.WriteLine($"{addr} {val}");
 
                 RelayMsgToProxyEntries(message);
@@ -249,21 +256,8 @@ namespace gVRC_bHaptics.Modules
             }
             catch (Exception ex)
             {
-                Common.GeneralLog.Log("(OSC.OnAvatarParamEvent) Error");
-                Common.GeneralLog.Log(ex);
+                Log.Error("OnAvatarParamEvent", ex);
             }
-        }
-
-        public void Send(string address, object value)
-        {
-            //Common.Instance.CommnadQueue.Enqueue(new OscCommand
-            //{
-            //    Type = OscCommandType.ChatSend,
-            //    Value = new object[] { value, true }
-            //});
-
-            ////OscMessage message = new OscMessage(address, value);
-            ////OSCSender.Send(message);
         }
     }
 }

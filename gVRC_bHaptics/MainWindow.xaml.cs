@@ -32,8 +32,6 @@ namespace gVRC_bHaptics
 
             InitializeComponent();
 
-            Common.Instance.GeneralLog.Dispatcher = this.Dispatcher;
-            Common.Instance.OSCLog.Dispatcher = this.Dispatcher;
             Common.Instance.Init();
             Common.Instance.StartThreads();
 
