@@ -1,5 +1,6 @@
 ﻿using Bhaptics.ModUI.Controls;
 using Bhaptics.Tact;
+using gVRC_bHaptics.Classes;
 using log4net;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Runtime.Remoting.Messaging;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Background;
 using Windows.Devices.AllJoyn;
 using Windows.UI.Core;
 using YamlDotNet.Serialization;
@@ -30,9 +32,9 @@ namespace gVRC_bHaptics.Modules
             }
         }
 
-        private readonly ILog Log = LogManager.GetLogger(typeof(BHaptics));
-        private readonly ILog LogOscMessage = LogManager.GetLogger("BHaptics.OSC");
-        private readonly ILog LogDotPoint = LogManager.GetLogger("BHaptics.DotPoint");
+        private readonly LogProxy Log = LogProxy.GetLogger(typeof(BHaptics), () => Common.Instance.Configuration.Logs.App);
+        private readonly LogProxy LogOscMessage = LogProxy.GetLogger("OSC.BHaptics", () => Common.Instance.Configuration.Logs.HapticsOSC);
+        private readonly LogProxy LogDotPoint = LogProxy.GetLogger("BHaptics.DotPoint", () => Common.Instance.Configuration.Logs.HapticsValues);
 
         private IHapticPlayer Player;
         private HapticPlayerManager HapticPlayerManager;
@@ -64,7 +66,7 @@ namespace gVRC_bHaptics.Modules
 
             try
             {
-                Log.Warn($"Initializing...");
+                Log.Debug($"Initializing...");
 
                 HapticPlayerManager.SetAppInfo("gVRC_bHaptics", "gVRC_bHaptics");
                 this.Player = HapticPlayerManager.Instance().GetHapticPlayer();
@@ -83,6 +85,7 @@ namespace gVRC_bHaptics.Modules
                     Play();
                     Thread.Sleep(delay);
                 }
+                Log.Debug("Exit update loop");
             }
             catch (ThreadAbortException)
             {
@@ -150,9 +153,9 @@ namespace gVRC_bHaptics.Modules
 
                     //Get the state of each motor
                     List<DotPoint> values = new List<DotPoint>();
-                    for (var i = 0; i < motorsValues.Length; i++)
-                        if (motorsValues[i] > 0)
-                            values.Add(new DotPoint(i, motorsValues[i]));
+                    for (var index = 0; index < motorsValues.Length; index++)
+                        if (motorsValues[index] > 0)
+                            values.Add(new DotPoint(index, motorsValues[index]));
 
                     //Update the state
                     string locationName = $"pos{location}";
@@ -174,7 +177,7 @@ namespace gVRC_bHaptics.Modules
                 //Clear
                 foreach (var locationData in MotorState)
                 {
-                    for (int index = 0; index < locationData.Value.Length; ++index)
+                    for (int index = 0; index < locationData.Value.Length; index++)
                         locationData.Value[index] = 0;
                 }
 
@@ -206,7 +209,7 @@ namespace gVRC_bHaptics.Modules
                 if (index >= 20) return null;
 
                 //Save the intensity for next update
-                int intensity = MultValue(oscIntensity, location.Value);
+                int intensity = FinalIntensity(oscIntensity, location.Value);
                 int fixedIndex = GetIndex(location.Value, index);
                 MotorState[location.Value][fixedIndex] = intensity;
 
@@ -229,9 +232,13 @@ namespace gVRC_bHaptics.Modules
         {
             try
             {
-                if (String.IsNullOrEmpty(oscLocation)) return PositionType.All;
+                if (String.IsNullOrEmpty(oscLocation))
+                {
+                    Log.Warn($"GetLocation() oscLocation is empty");
+                    return null;
+                }
 
-                switch (oscLocation.ToLower())
+                switch (oscLocation.ToLower().Trim())
                 {
                     case "vestfront":
                         return PositionType.VestFront;
@@ -292,37 +299,40 @@ namespace gVRC_bHaptics.Modules
         /// <param name="oscValue"></param>
         /// <param name="positionType"></param>
         /// <returns></returns>
-        private int MultValue(float oscValue, PositionType positionType)
+        private int FinalIntensity(float oscValue, PositionType positionType)
         {
+            int multiplier = 100;
+            float value = oscValue;
+
             try
             {
-                float multiplier = 1;
 
-                if (positionType == PositionType.VestFront || positionType == PositionType.VestBack)
+                switch (positionType)
                 {
-                    multiplier = ((float)Common.Instance.Configuration.BHaptics.VestMult / 100);
+                    case PositionType.VestBack:
+                    case PositionType.VestFront:
+                        multiplier = Common.Instance.Configuration.BHaptics.VestMult;
+                        break;
+                    case PositionType.Head:
+                        multiplier = Common.Instance.Configuration.BHaptics.HeadMult;
+                        break;
+                    default:
+                        break;
                 }
-                else if (positionType == PositionType.Head)
-                {
-                    multiplier = ((float)Common.Instance.Configuration.BHaptics.HeadMult / 100);
-                }
-
-                float value = oscValue * multiplier;
-
-                return (int)(value * 100);
             }
             catch (Exception ex)
             {
                 Log.Error("MultValue", ex);
-                return (int)(oscValue * 100);
             }
 
+            return (int)(value * multiplier);
         }
 
         private void ConnectionChanged(bool connected)
         {
             try
             {
+                Log.Debug($"Connection => {connected}");
                 this.Connected = connected;
                 HapticsConnectionChanged?.Invoke(connected);
             }

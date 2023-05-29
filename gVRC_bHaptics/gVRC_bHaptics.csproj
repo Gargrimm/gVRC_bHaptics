@@ -60,6 +60,9 @@
     <Compile Include="Classes\Configuration\Logs.cs" />
     <Compile Include="Classes\LogProxy.cs" />
     <Compile Include="Modules\VrcState.cs" />
+    <Compile Include="Screens\Logs.xaml.cs">
+      <DependentUpon>Logs.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Themes\ColourfulDarkTheme.xaml.cs">
       <DependentUpon>ColourfulDarkTheme.xaml</DependentUpon>
     </Compile>
@@ -77,11 +80,12 @@
     </Compile>
     <Compile Include="Themes\ThemesController.cs" />
     <Compile Include="ViewModels\AppViewModel.cs" />
-    <Compile Include="ViewModels\ConnectionState.cs" />
     <Compile Include="Screens\BHaptics.xaml.cs">
       <DependentUpon>BHaptics.xaml</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\OscHapticsViewModel.cs" />
+    <Compile Include="ViewModels\ConfigurationViewModel.cs" />
+    <Compile Include="ViewModels\LogsViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -101,6 +105,10 @@
     <Page Include="Screens\BHaptics.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Screens\Logs.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\ColourfulDarkTheme.xaml">
       <SubType>Designer</SubType>
@@ -144,7 +152,6 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="config.json" />
     <None Include="log4net.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

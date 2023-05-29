@@ -12,6 +12,6 @@ namespace gVRC_bHaptics.Classes.Configuration
         public bool HeadEnabled { get; set; } = true;
         public int VestMult { get; set; } = 100;
         public int HeadMult { get; set; } = 100;
-        public bool DisableOnAFK { get; set; } = false;
+        public bool DisableWhenAFK { get; set; } = false;
     }
 }

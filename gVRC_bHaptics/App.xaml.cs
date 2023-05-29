@@ -1,12 +1,6 @@
-﻿//using REghZyFramework.Themes;
+﻿using gVRC_bHaptics.Classes;
+using gVRC_bHaptics.Modules;
 using log4net;
-using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Web.SessionState;
 using System.Windows;
 
 namespace gVRC_bHaptics
@@ -16,11 +10,17 @@ namespace gVRC_bHaptics
     /// </summary>
     public partial class App : Application
     {
-        public static readonly ILog Log = LogManager.GetLogger(typeof(App));
+        public static readonly LogProxy Log = LogProxy.GetLogger(typeof(App), () => Common.Instance.Configuration.Logs.App);
 
         public App()
         {
-            //ThemesController.SetTheme(ThemesController.ThemeTypes.ColourfulDark);
+            Common.Instance.ReadConfig();
+            Exit += Application_Exit;
+        }
+
+        private void Application_Exit(object sender, ExitEventArgs e)
+        {
+            Common.Instance.SaveConfig();
         }
     }
 }

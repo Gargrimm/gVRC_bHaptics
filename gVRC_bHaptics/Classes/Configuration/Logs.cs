@@ -10,6 +10,7 @@ namespace gVRC_bHaptics.Classes.Configuration
     {
         public bool App { get; set; } = true;
         public bool Osc { get; set; } = false;
-        public bool Haptics { get; set; } = false;
+        public bool HapticsOSC { get; set; } = false;
+        public bool HapticsValues { get; set; } = false;
     }
 }

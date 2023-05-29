@@ -1,4 +1,5 @@
-﻿using log4net;
+﻿using gVRC_bHaptics.Classes;
+using log4net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace gVRC_bHaptics.Modules
 {
     internal class VrcState
     {
+        private readonly LogProxy Log = LogProxy.GetLogger(typeof(VrcState), () => Common.Instance.Configuration.Logs.App);
         public bool AFK { get; set; }
 
         public VrcState() {
@@ -24,13 +26,13 @@ namespace gVRC_bHaptics.Modules
                     if (bool.TryParse(value?.ToString(), out bool boolVal))
                     {
                         AFK = boolVal;
-                        App.Log.Debug($"AFK => {boolVal}");
+                        Log.Debug($"AFK => {boolVal}");
                     }
                 }
             }
             catch (Exception ex)
             {
-                App.Log.Error("VrcState.OscManager_MessageReceived", ex);
+                Log.Error("VrcState.OscManager_MessageReceived", ex);
             }
         }
     }

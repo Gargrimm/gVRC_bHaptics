@@ -65,8 +65,6 @@ namespace gVRC_bHaptics.Modules
         {
             try
             {
-                ReadConfig();
-
                 Exit = false;
                 ThreadsCancel = new CancellationTokenSource();
             }

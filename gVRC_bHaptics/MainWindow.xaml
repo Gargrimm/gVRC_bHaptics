@@ -13,12 +13,18 @@
     <Window.DataContext>
         <vm:AppViewModel/>
     </Window.DataContext>
-    
+
+   
     <StackPanel>
         <TabControl>
             <TabItem Header="OSC">
                 <Viewbox StretchDirection="Both" Stretch="Uniform">
                     <sc:BHaptics x:Name="BHaptics" Width="305"/>
+                </Viewbox>
+            </TabItem>
+            <TabItem Header="Logs">
+                <Viewbox StretchDirection="Both" Stretch="Uniform">
+                    <sc:Logs x:Name="Logs" Width="305"/>
                 </Viewbox>
             </TabItem>
         </TabControl>

@@ -27,7 +27,8 @@ namespace gVRC_bHaptics.Modules
         private OscListener OSCListener = null;
         private OscSender OSCSender = null;
 
-        private readonly ILog Log = LogManager.GetLogger(typeof(OSC));
+        private readonly LogProxy Log = LogProxy.GetLogger(typeof(OSC), () => Common.Instance.Configuration.Logs.App);
+        private readonly LogProxy LogOsc = LogProxy.GetLogger("OSC.App", () => Common.Instance.Configuration.Logs.Osc);
         private readonly string IP = "127.0.0.1";
         private readonly int Delay = 100;
 
@@ -235,6 +236,17 @@ namespace gVRC_bHaptics.Modules
 
         private void OnWorldParamEvent(OscMessage message)
         {
+            try
+            {
+                var addr = message.Address;
+                var val = message.FirstOrDefault()?.ToString();
+
+                LogOsc.Debug($"{addr} => {val}");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("OnAvatarParamEvent", ex);
+            }
         }
 
         private void OnAvatarParamEvent(OscMessage message)
@@ -242,7 +254,6 @@ namespace gVRC_bHaptics.Modules
             try
             {
                 if (message.Address.Equals("/avatar/parameters/Upright")) return;
-                if (message.Address.StartsWith("/avatar/parameters/Cheek_")) return;
                 if (message.Address.StartsWith("/avatar/parameters/Angular")) return;
 
                 var addr = message.Address;
@@ -253,6 +264,7 @@ namespace gVRC_bHaptics.Modules
                 RelayMsgToProxyEntries(message);
 
                 MessageReceived?.Invoke(message.Address, message.FirstOrDefault());
+                LogOsc.Debug($"{addr} => {val}");
             }
             catch (Exception ex)
             {

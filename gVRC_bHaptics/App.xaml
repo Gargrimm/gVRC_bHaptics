@@ -12,57 +12,9 @@
                 <!-- And Here (You can change to Light or Dark here) -->
                 <mica:ControlsDictionary />
                 <!-- This is mandatory -->
-                <ResourceDictionary Source="/Themes/ColourfulDarkTheme.xaml"/>
+                <ResourceDictionary Source="/Themes/DarkTheme.xaml"/>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>
 
-    <!--<Application.Resources>
-        <ResourceDictionary>
-            <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Themes/ColourfulDarkTheme.xaml"/>
-            </ResourceDictionary.MergedDictionaries>
-        </ResourceDictionary>
-    </Application.Resources>-->
-    <!--<Application.Resources>
-
-        <Style TargetType="Window">
-            <Setter Property="Background" Value="#1E1E1E"/>
-        </Style>
-        
-        <Style TargetType="UserControl">
-            <Setter Property="Background" Value="#1E1E1E"/>
-        </Style>
-
-        <Style TargetType="GroupBox">
-            <Setter Property="Background" Value="#1E1E1E"/>
-        </Style>
-        <Style TargetType="Label">
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="Slider">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-            <Setter Property="Width" Value="95" />
-        </Style>
-        <Style TargetType="CheckBox">
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="Button">
-            <Setter Property="Margin" Value="2,2,2,2" />
-            <Setter Property="Width" Value="95" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-        <Style TargetType="TextBox">
-            <Setter Property="Margin" Value="2,2,2,2" />
-            <Setter Property="Width" Value="95" />
-            <Setter Property="HorizontalAlignment" Value="Left" />
-            <Setter Property="VerticalAlignment" Value="Center" />
-        </Style>
-
-    </Application.Resources>-->
 </Application>
