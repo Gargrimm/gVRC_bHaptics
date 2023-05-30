@@ -34,6 +34,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>favicon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationFramework.Aero2" />
     <Reference Include="System" />
@@ -170,6 +173,11 @@
     <PackageReference Include="Bhaptics.Tac">
       <Version>1.4.16</Version>
     </PackageReference>
+    <PackageReference Include="Costura.Fody">
+      <Version>5.7.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
     <PackageReference Include="log4net">
       <Version>2.0.15</Version>
     </PackageReference>
@@ -183,6 +191,11 @@
       <Version>1.2.5</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="favicon.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="FodyWeavers.xml" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

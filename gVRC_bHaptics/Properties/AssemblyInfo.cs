@@ -8,9 +8,9 @@ using System.Windows;
 // conjunto de atributos. Cambie estos valores de atributo para modificar la información
 // asociada con un ensamblado.
 [assembly: AssemblyTitle("gVRC_bHaptics")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("VRChat OSC client for bHaptics")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("Gargrimm")]
 [assembly: AssemblyProduct("gVRC_bHaptics")]
 [assembly: AssemblyCopyright("Copyright ©  2023")]
 [assembly: AssemblyTrademark("")]
@@ -51,6 +51,7 @@ using System.Windows;
 // Puede especificar todos los valores o usar los valores predeterminados de número de compilación y de revisión
 // utilizando el carácter "*", como se muestra a continuación:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("0.2.0.0")]
+[assembly: AssemblyFileVersion("0.2.0.0")]
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "log4net.config", Watch = true)]
+[assembly: Guid("8EBB9212-FD2C-4F3F-99AD-7FC1658840A0")]

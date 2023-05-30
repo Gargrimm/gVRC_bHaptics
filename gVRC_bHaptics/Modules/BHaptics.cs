@@ -140,37 +140,58 @@ namespace gVRC_bHaptics.Modules
             {
                 //Check if there is anything to write
                 bool writeLog = MotorState.Any(x => x.Value.Any(y => y > 0));
-
-                if (writeLog)
-                    LogDotPoint.Debug("Begin update:");
-
-                //Send current state
-                foreach (var locationData in MotorState)
+                var disabledAFK = Common.Instance.Configuration.BHaptics.DisableWhenAFK && Common.Instance.VrcState.AFK;
+                if (!disabledAFK)
                 {
-                    PositionType location = locationData.Key;
-                    int[] motorsValues = locationData.Value;
-                    if (motorsValues == null) continue;
 
-                    //Get the state of each motor
-                    List<DotPoint> values = new List<DotPoint>();
-                    for (var index = 0; index < motorsValues.Length; index++)
-                        if (motorsValues[index] > 0)
-                            values.Add(new DotPoint(index, motorsValues[index]));
 
-                    //Update the state
-                    string locationName = $"pos{location}";
-                    if (values.Count > 0)
+                    if (writeLog)
+                        LogDotPoint.Debug("Begin update:");
+
+                    //Send current state
+                    foreach (var locationData in MotorState)
                     {
-                        Player.Submit(locationName, location, values, 100);
+                        PositionType location = locationData.Key;
+                        int[] motorsValues = locationData.Value;
+                        if (motorsValues == null) continue;
 
-                        if (writeLog)
-                            foreach (var dotpoint in values)
-                                LogDotPoint.Debug($"    {location}[{dotpoint.Index}] = {dotpoint.Intensity}");
-                    }
-                    else
-                    {
-                        if (writeLog) LogDotPoint.Debug($"    {location}: Off");
-                        Player.TurnOff(locationName);
+                        //Get the state of each motor
+                        List<DotPoint> values = new List<DotPoint>();
+                        for (var index = 0; index < motorsValues.Length; index++)
+                            if (motorsValues[index] > 0)
+                                values.Add(new DotPoint(index, motorsValues[index]));
+
+                        //Check if that location is disabled
+                        bool disabled = false;
+                        switch (location)
+                        {
+                            case PositionType.VestBack:
+                            case PositionType.VestFront:
+                                disabled = !Common.Instance.Configuration.BHaptics.VestEnabled;
+                                break;
+                            case PositionType.Head:
+                                disabled = !Common.Instance.Configuration.BHaptics.HeadEnabled;
+                                break;
+                            default:
+                                disabled = false;
+                                break;
+                        }
+
+                        //Update the state
+                        string locationName = $"pos{location}";
+                        if (values.Count > 0 && !disabled)
+                        {
+                            Player.Submit(locationName, location, values, 100);
+
+                            if (writeLog)
+                                foreach (var dotpoint in values)
+                                    LogDotPoint.Debug($"    {location}[{dotpoint.Index}] = {dotpoint.Intensity}");
+                        }
+                        else
+                        {
+                            if (writeLog) LogDotPoint.Debug($"    {location}: Off");
+                            Player.TurnOff(locationName);
+                        }
                     }
                 }
 
@@ -180,6 +201,7 @@ namespace gVRC_bHaptics.Modules
                     for (int index = 0; index < locationData.Value.Length; index++)
                         locationData.Value[index] = 0;
                 }
+
 
                 if (writeLog)
                     LogDotPoint.Debug("End update");
@@ -274,11 +296,11 @@ namespace gVRC_bHaptics.Modules
                     case PositionType.VestBack:
                     case PositionType.VestFront:
                         if (rawIndex >= MirroredVestMotors.Length) return rawIndex;
-                        return MirroredVestMotors[rawIndex];
+                        return rawIndex;
 
                     case PositionType.Head:
                         if (rawIndex >= MirroredHeadMotors.Length) return rawIndex;
-                        return MirroredHeadMotors[rawIndex];
+                        return rawIndex;
 
                     default:
                         Log.Warn($"GetIndex() \"{location}\" not yet implemented.");
@@ -375,8 +397,8 @@ namespace gVRC_bHaptics.Modules
                         string pos = "Head";
                         string addr = $"/avatar/parameters/bOSC_v1_{pos}_{node}";
 
-                        OscManager_MessageReceived(addr, 1);
-                        Thread.Sleep(100);
+                        OscManager_MessageReceived(addr, 1f);
+                        Thread.Sleep(10);
                     }
                 }
                 catch (Exception) { }

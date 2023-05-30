@@ -90,7 +90,7 @@
                 <CheckBox x:Name="CheckHeadToggle" Grid.Row="2" Grid.Column="3" HorizontalAlignment="Center" IsChecked="{Binding HeadEnabled}" />
                 <Button x:Name="ButtonHeadTest" Margin="0,2,0,2" Width="50" Grid.Row="2" Grid.Column="4" Content="TEST" Click="ButtonHeadTest_Click" />
 
-                <CheckBox x:Name="CheckHapticsAFK" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" Content="Disable haptics when AFK" IsChecked="{Binding DisableOnAFK}" />
+                <CheckBox x:Name="CheckHapticsAFK" Grid.Column="0" Grid.Row="3" Grid.ColumnSpan="3" Content="Disable haptics when AFK" IsChecked="{Binding DisableWhenAFK}" />
 
             </Grid>
         </GroupBox>
