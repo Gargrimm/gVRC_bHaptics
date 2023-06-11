@@ -253,13 +253,9 @@ namespace gVRC_bHaptics.Modules
         {
             try
             {
-                if (message.Address.Equals("/avatar/parameters/Upright")) return;
-                if (message.Address.StartsWith("/avatar/parameters/Angular")) return;
-
                 var addr = message.Address;
                 var val = message.FirstOrDefault()?.ToString();
                 Common.Instance.OnAvatarParameterEvent(addr, val);
-                Console.WriteLine($"{addr} {val}");
 
                 RelayMsgToProxyEntries(message);
 

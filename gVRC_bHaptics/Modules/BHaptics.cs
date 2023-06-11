@@ -167,10 +167,10 @@ namespace gVRC_bHaptics.Modules
                         {
                             case PositionType.VestBack:
                             case PositionType.VestFront:
-                                disabled = !Common.Instance.Configuration.BHaptics.VestEnabled;
+                                disabled = !Common.Instance.Configuration.BHaptics.Vest.Enabled;
                                 break;
                             case PositionType.Head:
-                                disabled = !Common.Instance.Configuration.BHaptics.HeadEnabled;
+                                disabled = !Common.Instance.Configuration.BHaptics.Head.Enabled;
                                 break;
                             default:
                                 disabled = false;
@@ -242,7 +242,6 @@ namespace gVRC_bHaptics.Modules
                 Log.Error("Update", ex);
                 return null;
             }
-
         }
 
         /// <summary>
@@ -279,7 +278,6 @@ namespace gVRC_bHaptics.Modules
                 return null;
             }
         }
-
 
         /// <summary>
         /// Gets the internal index for each position
@@ -328,15 +326,14 @@ namespace gVRC_bHaptics.Modules
 
             try
             {
-
                 switch (positionType)
                 {
                     case PositionType.VestBack:
                     case PositionType.VestFront:
-                        multiplier = Common.Instance.Configuration.BHaptics.VestMult;
+                        multiplier = Common.Instance.Configuration.BHaptics.Vest.Mult;
                         break;
                     case PositionType.Head:
-                        multiplier = Common.Instance.Configuration.BHaptics.HeadMult;
+                        multiplier = Common.Instance.Configuration.BHaptics.Head.Mult;
                         break;
                     default:
                         break;

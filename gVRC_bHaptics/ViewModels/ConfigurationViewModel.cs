@@ -79,40 +79,40 @@ namespace gVRC_bHaptics.ViewModels
 
         public float VestMult
         {
-            get => (int)(model?.BHaptics?.VestMult).GetValueOrDefault(100);
+            get => (int)(model?.BHaptics?.Vest.Mult).GetValueOrDefault(100);
             set
             {
-                model.BHaptics.VestMult = (int)value;
+                model.BHaptics.Vest.Mult = (int)value;
                 NotifyPropertyChanged();
             }
         }
 
         public float HeadMult
         {
-            get => (int)(model?.BHaptics?.HeadMult).GetValueOrDefault(100);
+            get => (int)(model?.BHaptics?.Head?.Mult).GetValueOrDefault(100);
             set
             {
-                model.BHaptics.HeadMult = (int)value;
+                model.BHaptics.Head.Mult = (int)value;
                 NotifyPropertyChanged();
             }
         }
 
         public bool VestEnabled
         {
-            get => model.BHaptics.VestEnabled;
+            get => model.BHaptics.Vest.Enabled;
             set
             {
-                model.BHaptics.VestEnabled = value;
+                model.BHaptics.Vest.Enabled = value;
                 NotifyPropertyChanged();
             }
         }
 
         public bool HeadEnabled
         {
-            get => model.BHaptics.HeadEnabled;
+            get => model.BHaptics.Head.Enabled;
             set
             {
-                model.BHaptics.HeadEnabled = value;
+                model.BHaptics.Head.Enabled = value;
                 NotifyPropertyChanged();
             }
         }

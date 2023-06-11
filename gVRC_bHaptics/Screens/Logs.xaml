@@ -14,11 +14,12 @@
         <GroupBox Header="Logs toggle">
             <GroupItem>
                 <StackPanel>
-                    <CheckBox Grid.Row="0" Content="App" IsChecked="{Binding App}" Margin="{StaticResource tbMargin}" />
-                    <Label Grid.Row="1" Content="Caution, very spammy logs:" Margin="{StaticResource tbMargin}"/>
-                    <CheckBox Grid.Row="2" Content="VRChat OSC" IsChecked="{Binding OSC}" />
-                    <CheckBox Grid.Row="3" Content="bHaptics OSC" IsChecked="{Binding HapticsOSC}" Margin="{StaticResource tbMargin}"/>
-                    <CheckBox Grid.Row="4" Content="bHaptics Values" IsChecked="{Binding HapticsValues}" Margin="{StaticResource tbMargin}"/>
+                    <Button x:Name="btnOpenFolder" Click="btnOpenFolder_Click" Content="Open app folder" />
+                    <CheckBox Content="App" IsChecked="{Binding App}" Margin="{StaticResource tbMargin}" />
+                    <Label Content="Caution, very spammy logs:" Margin="{StaticResource tbMargin}"/>
+                    <CheckBox Content="VRChat OSC" IsChecked="{Binding OSC}" />
+                    <CheckBox Content="bHaptics OSC" IsChecked="{Binding HapticsOSC}" Margin="{StaticResource tbMargin}"/>
+                    <CheckBox Content="bHaptics Values" IsChecked="{Binding HapticsValues}" Margin="{StaticResource tbMargin}"/>
                 </StackPanel>
             </GroupItem>
         </GroupBox>

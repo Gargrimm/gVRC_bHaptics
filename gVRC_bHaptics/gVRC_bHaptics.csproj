@@ -61,6 +61,7 @@
     </ApplicationDefinition>
     <Compile Include="Classes\Configuration\BHapticsConfig.cs" />
     <Compile Include="Classes\Configuration\Logs.cs" />
+    <Compile Include="Classes\Constants.cs" />
     <Compile Include="Classes\LogProxy.cs" />
     <Compile Include="Modules\VrcState.cs" />
     <Compile Include="Screens\Logs.xaml.cs">
@@ -155,9 +156,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="log4net.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <EmbeddedResource Include="log4net.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

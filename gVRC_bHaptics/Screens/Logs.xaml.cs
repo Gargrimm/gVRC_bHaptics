@@ -3,6 +3,7 @@ using gVRC_bHaptics.Modules;
 using gVRC_bHaptics.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +32,16 @@ namespace gVRC_bHaptics.Screens
         {
             this.DataContext = ViewModel;
             InitializeComponent();
+        }
+
+        private void btnOpenFolder_Click(object sender, RoutedEventArgs e)
+        {
+            ProcessStartInfo startInfo = new ProcessStartInfo
+            {
+                Arguments = Constants.AppFolder,
+                FileName = "explorer.exe"
+            };
+            Process.Start(startInfo);
         }
     }
 }

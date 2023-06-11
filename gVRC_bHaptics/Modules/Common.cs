@@ -42,8 +42,7 @@ namespace gVRC_bHaptics.Modules
         public VrcState VrcState { get; private set; }
 
         private CancellationTokenSource ThreadsCancel = null;
-        private readonly string ConfigFilePath = ".";
-        private readonly string ConfigFileName = "config.json";
+
 
         private Common()
         {
@@ -57,7 +56,7 @@ namespace gVRC_bHaptics.Modules
             }
             catch (Exception ex)
             {
-                App.Log.Error("Shutdown", ex);
+                App.Log.Error("OnAvatarParameterEvent", ex);
             }
         }
 
@@ -70,7 +69,7 @@ namespace gVRC_bHaptics.Modules
             }
             catch (Exception ex)
             {
-                App.Log.Error("Shutdown", ex);
+                App.Log.Error("Init", ex);
             }
         }
 
@@ -94,7 +93,7 @@ namespace gVRC_bHaptics.Modules
         {
             try
             {
-                string pathToFile = Path.Combine(ConfigFilePath, ConfigFileName);
+                string pathToFile = Path.Combine(Constants.ConfigFilePath, Constants.ConfigFileName);
                 if (File.Exists(pathToFile))
                 {
                     string contents = File.ReadAllText(pathToFile);
@@ -117,7 +116,7 @@ namespace gVRC_bHaptics.Modules
         {
             try
             {
-                string pathToFile = Path.Combine(ConfigFilePath, ConfigFileName);
+                string pathToFile = Path.Combine(Constants.ConfigFilePath, Constants.ConfigFileName);
                 string contents = Newtonsoft.Json.JsonConvert.SerializeObject(Configuration, Newtonsoft.Json.Formatting.Indented);
                 File.WriteAllText(pathToFile, contents);
             }
